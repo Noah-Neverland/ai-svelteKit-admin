@@ -18,13 +18,13 @@
 
 	let { config, getRowKey, fetchData, class: className = '' }: TableProps = $props();
 
-	// 直接使用 props，因为它们在组件生命周期中通常不会改变
-	const table = useTable({
+	// 使用 $derived 确保响应式更新
+	const table = $derived(useTable({
 		columns: config.columns,
 		data: config.data,
 		fetchData,
 		getRowKey
-	});
+	}));
 
 	function getIcon(iconName?: string) {
 		if (!iconName) return null;
@@ -48,7 +48,7 @@
 		return value ?? '';
 	}
 
-	const getRowKeyFn = getRowKey || ((record: any, index: number) => index);
+	const getRowKeyFn = $derived(getRowKey || ((record: any, index: number) => index));
 </script>
 
 <TableComponent class={className}>

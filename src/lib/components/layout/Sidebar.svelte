@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { get } from 'svelte/store';
 	import { menuStore, filteredMenuItems } from '$lib/stores/menu';
-	import { ChevronRight, ChevronLeft } from 'lucide-svelte';
+	import { ChevronLeft } from 'lucide-svelte';
 	import MenuTree from '../menu/MenuTree.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 
 	// 只监听路由变化，使用 get 非响应式读取 store 值
 	$effect(() => {
@@ -37,33 +37,27 @@
 	});
 </script>
 
-<aside
-	class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 border-r bg-background transition-all duration-300 {$menuStore.collapsed
-		? '-translate-x-full'
-		: 'translate-x-0'}"
+<Sidebar.Root
+	collapsible="offcanvas"
+	class="top-16 h-[calc(100vh-4rem)] {$menuStore.collapsed ? '-translate-x-full' : 'translate-x-0'}"
 >
-	<div class="flex h-full flex-col">
-		<!-- 菜单内容 -->
-		<div class="flex-1 overflow-y-auto p-4">
-			<MenuTree items={$filteredMenuItems} />
-		</div>
-
-		<!-- 折叠按钮 -->
-		<div class="border-t p-2">
-			<Button
-				variant="ghost"
-				size="icon"
-				class="w-full"
-				onclick={() => menuStore.toggleCollapse()}
-			>
-				{#snippet children()}
-					{#if $menuStore.collapsed}
-						<ChevronRight class="h-4 w-4" />
-					{:else}
-						<ChevronLeft class="h-4 w-4" />
-					{/if}
-				{/snippet}
-			</Button>
-		</div>
-	</div>
-</aside>
+	<Sidebar.Content>
+		<Sidebar.Group>
+			<Sidebar.GroupContent>
+				<MenuTree items={$filteredMenuItems} />
+			</Sidebar.GroupContent>
+		</Sidebar.Group>
+	</Sidebar.Content>
+	<Sidebar.Footer>
+		<Button
+			variant="ghost"
+			size="icon"
+			class="w-full"
+			onclick={() => menuStore.toggleCollapse()}
+		>
+			{#snippet children()}
+				<ChevronLeft class="h-4 w-4" />
+			{/snippet}
+		</Button>
+	</Sidebar.Footer>
+</Sidebar.Root>

@@ -12,13 +12,15 @@
 
 	let { config, class: className = '', children }: FormProps = $props();
 
-	const form = useForm(config);
+	const form = $derived(useForm(config));
 
-	const handleSubmit = form.handleSubmit(async (values) => {
-		// 直接使用 config，因为它在组件生命周期中通常不会改变
-		if (config.onSubmit) {
-			await config.onSubmit(values);
-		}
+	const handleSubmit = $derived.by(() => {
+		return form.handleSubmit(async (values) => {
+			// 使用 $derived 确保响应式更新
+			if (config.onSubmit) {
+				await config.onSubmit(values);
+			}
+		});
 	});
 </script>
 
