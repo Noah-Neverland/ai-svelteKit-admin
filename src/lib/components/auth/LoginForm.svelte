@@ -5,12 +5,13 @@
 	import Captcha from './Captcha.svelte';
 	import { validateEmail, validatePassword } from '$lib/utils/validation';
 
-	let username = '';
-	let password = '';
-	let captcha = '';
-	let rememberMe = false;
-	let loading = false;
-	let error = '';
+	// 使用 Svelte 5 runes 声明响应式状态
+	let username = $state('');
+	let password = $state('');
+	let captcha = $state('');
+	let rememberMe = $state(false);
+	let loading = $state(false);
+	let error = $state('');
 
 	async function handleSubmit() {
 		error = '';
@@ -54,7 +55,7 @@
 <div class="login-form max-w-md mx-auto p-8 bg-white rounded-lg shadow-md">
 	<h2 class="text-2xl font-bold text-center mb-6">用户登录</h2>
 
-	<form on:submit|preventDefault={handleSubmit} class="space-y-4">
+	<form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }} class="space-y-4">
 		<div>
 			<label for="username" class="block text-sm font-medium text-gray-700 mb-1">
 				用户名/邮箱

@@ -5,11 +5,12 @@
 	import Captcha from './Captcha.svelte';
 	import { validateEmail } from '$lib/utils/validation';
 
-	let email = '';
-	let captcha = '';
-	let loading = false;
-	let error = '';
-	let success = false;
+	// 使用 Svelte 5 runes 声明响应式状态
+	let email = $state('');
+	let captcha = $state('');
+	let loading = $state(false);
+	let error = $state('');
+	let success = $state(false);
 
 	async function handleSubmit() {
 		error = '';
@@ -65,7 +66,7 @@
 	{:else}
 		<p class="text-sm text-gray-600 mb-6 text-center">请输入您的邮箱或用户名</p>
 
-		<form on:submit|preventDefault={handleSubmit} class="space-y-4">
+		<form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }} class="space-y-4">
 			<div>
 				<label for="forgot-email" class="block text-sm font-medium text-gray-700 mb-1">
 					邮箱/用户名

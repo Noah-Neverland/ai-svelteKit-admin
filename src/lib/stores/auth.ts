@@ -1,9 +1,10 @@
 /**
  * 认证 Store
+ * 注意：在普通 .ts 文件中不能使用 runes，需要使用传统的 writable store
  */
-import { writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 import { browser } from '$app/environment';
-import { localStorage } from '$lib/utils/storage';
+import { localStorage, sessionStorage } from '$lib/utils/storage';
 import type { UserInfo } from '$lib/types/auth.types';
 
 const TOKEN_KEY = 'auth_token';
@@ -28,30 +29,35 @@ function getInitialState(): AuthState {
 	const token = localStorage.get<string>(TOKEN_KEY);
 	const user = localStorage.get<UserInfo>(USER_KEY);
 
+	if (token && user) {
+		return {
+			isAuthenticated: true,
+			token,
+			user
+		};
+	}
+
+	// 尝试从 sessionStorage 加载
+	const sessionToken = sessionStorage.get<string>(TOKEN_KEY);
+	const sessionUser = sessionStorage.get<UserInfo>(USER_KEY);
+	if (sessionToken && sessionUser) {
+		return {
+			isAuthenticated: true,
+			token: sessionToken,
+			user: sessionUser
+		};
+	}
+
 	return {
-		isAuthenticated: !!(token && user),
-		token,
-		user
+		isAuthenticated: false,
+		token: null,
+		user: null
 	};
 }
 
-// 初始化状态
+// 创建 store
 function createAuthStore() {
 	const { subscribe, set, update } = writable<AuthState>(getInitialState());
-
-	// 在客户端初始化时检查 token
-	if (browser) {
-		const token = localStorage.get<string>(TOKEN_KEY);
-		const user = localStorage.get<UserInfo>(USER_KEY);
-		if (token && user) {
-			update((state) => ({
-				...state,
-				isAuthenticated: true,
-				token,
-				user
-			}));
-		}
-	}
 
 	return {
 		subscribe,
@@ -103,4 +109,34 @@ function createAuthStore() {
 	};
 }
 
+// 导出 store
 export const authStore = createAuthStore();
+
+// 为了在组件中更方便地访问，导出一个包含 getter 的对象
+// 在组件中可以使用 $authStore.isAuthenticated 语法
+export const auth = {
+	get isAuthenticated() {
+		let value: boolean = false;
+		authStore.subscribe((state) => {
+			value = state.isAuthenticated;
+		})();
+		return value;
+	},
+	get token() {
+		let value: string | null = null;
+		authStore.subscribe((state) => {
+			value = state.token;
+		})();
+		return value;
+	},
+	get user() {
+		let value: UserInfo | null = null;
+		authStore.subscribe((state) => {
+			value = state.user;
+		})();
+		return value;
+	},
+	login: authStore.login.bind(authStore),
+	logout: authStore.logout.bind(authStore),
+	updateUser: authStore.updateUser.bind(authStore)
+};

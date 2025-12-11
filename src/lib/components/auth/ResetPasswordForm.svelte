@@ -5,12 +5,14 @@
 	import { validatePassword } from '$lib/utils/validation';
 	import { page } from '$app/stores';
 
-	let password = '';
-	let confirmPassword = '';
-	let loading = false;
-	let error = '';
+	// 使用 Svelte 5 runes 声明响应式状态
+	let password = $state('');
+	let confirmPassword = $state('');
+	let loading = $state(false);
+	let error = $state('');
 
-	$: resetToken = $page.url.searchParams.get('token') || '';
+	// 使用 $derived 获取 resetToken（替代 $:）
+	let resetToken = $derived($page.url.searchParams.get('token') || '');
 
 	async function handleSubmit() {
 		error = '';
@@ -53,7 +55,7 @@
 
 	<p class="text-sm text-gray-600 mb-6 text-center">请设置您的新密码</p>
 
-	<form on:submit|preventDefault={handleSubmit} class="space-y-4">
+	<form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }} class="space-y-4">
 		<div>
 			<label for="reset-password" class="block text-sm font-medium text-gray-700 mb-1">
 				新密码

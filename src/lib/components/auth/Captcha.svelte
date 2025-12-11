@@ -2,18 +2,25 @@
 	import { onMount } from 'svelte';
 	import { getCaptchaService } from '$lib/services/auth.service';
 
-	let captchaImage = '';
-	let captchaToken = '';
-	let captchaValue = '';
-	let loading = false;
-	let error = '';
+	// 使用 Svelte 5 $props 声明组件属性
+	let { value = '', onInput = () => {} }: {
+		value?: string;
+		onInput?: (value: string) => void;
+	} = $props();
 
-	export let value = '';
-	export let onInput: (value: string) => void = () => {};
+	// 使用 Svelte 5 runes 声明响应式状态
+	let captchaImage = $state('');
+	let captchaToken = $state('');
+	let captchaValue = $state('');
+	let loading = $state(false);
+	let error = $state('');
 
-	$: if (captchaValue !== value) {
-		onInput(captchaValue);
-	}
+	// 使用 $effect 监听 captchaValue 变化（替代 $:）
+	$effect(() => {
+		if (captchaValue !== value) {
+			onInput(captchaValue);
+		}
+	});
 
 	async function loadCaptcha() {
 		loading = true;
@@ -62,7 +69,7 @@
 			{:else if captchaImage}
 				<button
 					type="button"
-					on:click={handleRefresh}
+					onclick={handleRefresh}
 					class="w-24 h-10 border border-gray-300 rounded cursor-pointer p-0 bg-transparent"
 					title="点击刷新验证码"
 				>
@@ -76,7 +83,7 @@
 		</div>
 		<button
 			type="button"
-			on:click={handleRefresh}
+			onclick={handleRefresh}
 			class="px-3 py-2 text-sm text-blue-600 hover:text-blue-800 border border-blue-300 rounded-md hover:bg-blue-50"
 		>
 			刷新
