@@ -3,7 +3,6 @@
 	import { loginService } from '$lib/services/auth.service';
 	import { ROUTES } from '$lib/constants/routes';
 	import Captcha from './Captcha.svelte';
-	import { validateEmail, validatePassword } from '$lib/utils/validation';
 
 	// 使用 Svelte 5 runes 声明响应式状态
 	let username = $state('');

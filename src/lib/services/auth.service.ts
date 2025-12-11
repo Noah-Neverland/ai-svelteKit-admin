@@ -106,3 +106,17 @@ export async function getCaptchaService(): Promise<{ image: string; token: strin
 		throw new Error(error.message || '获取验证码失败，请重试');
 	}
 }
+
+/**
+ * 修改密码服务
+ */
+export async function changePasswordService(oldPassword: string, newPassword: string): Promise<void> {
+	try {
+		const response = await authApi.changePassword({ oldPassword, newPassword });
+		if (!response.success) {
+			throw new Error(response.message || '修改密码失败');
+		}
+	} catch (error: any) {
+		throw new Error(error.message || '修改密码失败，请重试');
+	}
+}

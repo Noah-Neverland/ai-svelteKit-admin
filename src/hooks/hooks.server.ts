@@ -8,6 +8,7 @@
  * - transport: 自定义序列化（可选）
  */
 import { redirect } from '@sveltejs/kit';
+import { dev } from '$app/environment';
 import type { Handle } from '@sveltejs/kit';
 import { ROUTES } from '$lib/constants/routes';
 
@@ -18,6 +19,11 @@ import { ROUTES } from '$lib/constants/routes';
 export const handle: Handle = async ({ event, resolve }) => {
 	const { url, cookies, request } = event;
 	const pathname = url.pathname;
+
+	// 处理 Chrome DevTools 的自动工作区请求（静默返回 404）
+	if (dev && pathname === '/.well-known/appspecific/com.chrome.devtools.json') {
+		return new Response(null, { status: 404 });
+	}
 
 	// 获取 AbortSignal（SvelteKit 最新 API）
 	// 可用于取消长时间运行的请求

@@ -52,3 +52,10 @@ export function logout(): Promise<ApiResponse<void>> {
 export function getCaptcha(): Promise<ApiResponse<{ image: string; token: string }>> {
 	return request.get('/auth/captcha');
 }
+
+/**
+ * 修改密码
+ */
+export function changePassword(data: { oldPassword: string; newPassword: string }): Promise<ApiResponse<void>> {
+	return request.post('/auth/change-password', data);
+}
