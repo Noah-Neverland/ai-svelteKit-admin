@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>诗韵 - 古诗词雅集</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700;900&family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap');
+        
+        :root {
+            /* 中国传统色彩系统 */
+            --ink-black: #1a1a1a;
+            --ink-gray: #4a4a4a;
+            --paper-white: #faf8f3;
+            --paper-cream: #f5f1e8;
+            --cinnabar-red: #c8553d;
+            --celadon-green: #9eb384;
+            --jade-green: #588157;
+            --imperial-gold: #d4a574;
+            --mist-gray: #e8e4dc;
+            --ink-wash: rgba(26, 26, 26, 0.05);
+            
+            /* 字体系统 */
+            --font-title: 'Ma Shan Zheng', 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+            --font-body: 'Noto Serif SC', serif;
+            
+            /* iOS 安全区域 */
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+            
+            /* 动画时序 */
+            --ease-ink: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-brush: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e4dc 100%);
+            color: var(--ink-black);
+            overflow-x: hidden;
+            position: relative;
+            padding: 40px 20px 60px;
+        }
+        
+        /* 设计稿标题 */
+        .design-header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(200, 85, 61, 0.05) 0%, rgba(158, 179, 132, 0.05) 100%);
+            border-radius: 24px;
+            border: 2px solid rgba(200, 85, 61, 0.1);
+        }
+        
+        .design-main-title {
+            font-family: var(--font-title);
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--ink-black);
+            margin-bottom: 16px;
+            letter-spacing: 8px;
+        }
+        
+        .design-subtitle {
+            font-size: 18px;
+            color: var(--ink-gray);
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+        
+        .design-description {
+            font-size: 15px;
+            color: var(--ink-gray);
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        /* 设计稿容器 */
+        .design-board {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* 页面标题 */
+        .page-section-title {
+            font-family: var(--font-title);
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--ink-black);
+            text-align: center;
+            margin-bottom: 16px;
+            margin-top: 40px;
+            letter-spacing: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+        }
+        
+        .page-section-title::before {
+            content: '0' attr(data-page);
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            background: var(--cinnabar-red);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-body);
+            margin-right: 12px;
+        }
+        
+        .page-section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--cinnabar-red), transparent);
+        }
+        
+        .page-section-subtitle {
+            text-align: center;
+            font-size: 15px;
+            color: var(--ink-gray);
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+            padding: 0 20px;
+        }
+        
+        /* iOS 设备容器 */
+        .device-frame {
+            max-width: 430px;
+            margin: 0 auto 120px;
+            background: var(--paper-white);
+            position: relative;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.15),
+                0 8px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 40px;
+            overflow: hidden;
+            border: 12px solid #1a1a1a;
+        }
+        
+        .device-frame:last-child {
+            margin-bottom: 40px;
+        }
+        
+        /* 设备刘海 */
+        .device-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #1a1a1a;
+            border-radius: 0 0 20px 20px;
+            z-index: 1000;
+        }
+        
+        /* 页面容器 */
+        .page {
+            display: block;
+            opacity: 1;
+            padding-top: calc(30px + 60px);
+            padding-bottom: 90px;
+            min-height: 100vh;
+            background: var(--paper-white);
+        }
+        
+        /* 顶部导航栏 */
+        .nav-bar {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--paper-white) 0%, var(--paper-white) 90%, transparent 100%);
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: 12px;
+            z-index: 100;
+            border-bottom: 1px solid var(--ink-wash);
+        }
+        
+        .nav-back {
+            font-size: 17px;
+            color: var(--cinnabar-red);
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-family: var(--font-body);
+            font-weight: 500;
+        }
+        
+        .nav-title {
+            font-family: var(--font-title);
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--ink-black);
+            letter-spacing: 2px;
+        }
+        
+        .nav-action {
+            font-size: 17px;
+            color: var(--cinnabar-red);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-weight: 500;
+            transition: transform 0.2s var(--ease-ink);
+        }
+        
+        .nav-action:active {
+            transform: scale(0.95);
+        }
+        
+        .nav-spacer {
+            width: 60px;
+        }
+        
+        /* 底部标签栏 */
+        .tab-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 80px;
+            background: var(--paper-white);
+            border-top: 1px solid var(--mist-gray);
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            padding-top: 10px;
+            padding-bottom: 20px;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            padding: 8px 0;
+        }
+        
+        .tab-icon {
+            font-size: 26px;
+            line-height: 1;
+            transition: all 0.3s var(--ease-brush);
+        }
+        
+        .tab-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--ink-gray);
+            transition: all 0.3s var(--ease-brush);
+            letter-spacing: 0.5px;
+        }
+        
+        .tab-item.active .tab-icon {
+            color: var(--cinnabar-red);
+            transform: scale(1.1);
+        }
+        
+        .tab-item.active .tab-label {
+            color: var(--cinnabar-red);
+        }
+        
+        /* ========== 首页/输入页面 ========== */
+        .home-page {
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+        
+        .hero-section {
+            text-align: center;
+            padding: 60px 0 40px;
+            position: relative;
+        }
+        
+        .hero-title {
+            font-family: var(--font-title);
+            font-size: 52px;
+            font-weight: 900;
+            color: var(--ink-black);
+            letter-spacing: 8px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--ink-black) 0%, var(--ink-gray) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInDown 0.8s var(--ease-brush) both;
+        }
+        
+        .hero-subtitle {
+            font-size: 15px;
+            color: var(--ink-gray);
+            letter-spacing: 3px;
+            font-weight: 300;
+            animation: fadeInDown 0.8s 0.1s var(--ease-brush) both;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 装饰性墨点 */
+        .ink-decoration {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--ink-wash) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .ink-decoration:nth-child(1) {
+            top: -40px;
+            right: 20px;
+            animation: floatInk 8s ease-in-out infinite;
+        }
+        
+        .ink-decoration:nth-child(2) {
+            bottom: -20px;
+            left: 10px;
+            animation: floatInk 10s ease-in-out infinite reverse;
+        }
+        
+        @keyframes floatInk {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(10px, -10px) scale(1.05); }
+        }
+        
+        .input-section {
+            background: white;
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.04),
+                0 2px 8px rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--mist-gray);
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s 0.2s var(--ease-brush) both;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .input-group {
+            margin-bottom: 24px;
+        }
+        
+        .input-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .input-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--ink-black);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.5px;
+        }
+        
+        .input-label-icon {
+            font-size: 18px;
+        }
+        
+        .text-input {
+            width: 100%;
+            padding: 16px 18px;
+            border: 2px solid var(--mist-gray);
+            border-radius: 16px;
+            font-size: 16px;
+            font-family: var(--font-body);
+            color: var(--ink-black);
+            background: var(--paper-cream);
+            transition: all 0.3s var(--ease-ink);
+            outline: none;
+        }
+        
+        .text-input:focus {
+            border-color: var(--jade-green);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(88, 129, 87, 0.1);
+        }
+        
+        .text-input::placeholder {
+            color: #aaa;
+        }
+        
+        textarea.text-input {
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.6;
+        }
+        
+        .generate-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--cinnabar-red) 0%, #b94630 100%);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            box-shadow: 
+                0 8px 24px rgba(200, 85, 61, 0.3),
+                0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s var(--ease-brush);
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .generate-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .generate-button:hover::before {
+            left: 100%;
+        }
+        
+        .generate-button:active {
+            transform: scale(0.98);
+            box-shadow: 
+                0 4px 16px rgba(200, 85, 61, 0.3),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .example-section {
+            padding: 20px 0;
+            animation: fadeInUp 0.8s 0.3s var(--ease-brush) both;
+        }
+        
+        .example-title {
+            font-size: 13px;
+            color: var(--ink-gray);
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .example-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .example-tag {
+            padding: 10px 18px;
+            background: white;
+            border: 1.5px solid var(--mist-gray);
+            border-radius: 24px;
+            font-size: 14px;
+            color: var(--ink-black);
+            cursor: pointer;
+            transition: all 0.3s var(--ease-brush);
+            font-weight: 500;
+        }
+        
+        .example-tag:active {
+            transform: scale(0.95);
+            background: var(--paper-cream);
+            border-color: var(--jade-green);
+        }
+        
+        /* ========== 古诗详情页 ========== */
+        .detail-page {
+            padding: 0;
+        }
+        
+        .poem-hero {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            margin-bottom: -60px;
+        }
+        
+        .poem-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: zoomIn 1s var(--ease-brush) both;
+        }
+        
+        @keyframes zoomIn {
+            from {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .poem-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(to top, var(--paper-white) 0%, transparent 100%);
+        }
+        
+        .poem-content {
+            background: var(--paper-white);
+            border-radius: 32px 32px 0 0;
+            padding: 32px 24px 40px;
+            position: relative;
+            z-index: 2;
+            animation: slideUp 0.8s 0.2s var(--ease-brush) both;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .poem-header {
+            text-align: center;
+            padding-bottom: 28px;
+            border-bottom: 2px solid var(--mist-gray);
+            margin-bottom: 28px;
+            position: relative;
+        }
+        
+        .poem-header::after {
+            content: '✦';
+            position: absolute;
+            bottom: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--paper-white);
+            color: var(--imperial-gold);
+            font-size: 20px;
+            padding: 0 12px;
+        }
+        
+        .poem-title {
+            font-family: var(--font-title);
+            font-size: 38px;
+            font-weight: 900;
+            color: var(--ink-black);
+            margin-bottom: 16px;
+            letter-spacing: 6px;
+        }
+        
+        .poem-meta {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            color: var(--ink-gray);
+            font-weight: 500;
+        }
+        
+        .poem-meta-divider {
+            width: 4px;
+            height: 4px;
+            background: var(--imperial-gold);
+            border-radius: 50%;
+        }
+        
+        .audio-player {
+            background: linear-gradient(135deg, var(--jade-green) 0%, var(--celadon-green) 100%);
+            border-radius: 20px;
+            padding: 20px 24px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 6px 20px rgba(88, 129, 87, 0.25);
+        }
+        
+        .play-button {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--jade-green);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s var(--ease-brush);
+            flex-shrink: 0;
+        }
+        
+        .play-button:active {
+            transform: scale(0.9);
+        }
+        
+        .audio-info {
+            flex: 1;
+            color: white;
+        }
+        
+        .audio-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        
+        .audio-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+        
+        .audio-progress-bar {
+            width: 0%;
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s linear;
+        }
+        
+        .audio-duration {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .poem-verses {
+            margin-bottom: 32px;
+        }
+        
+        .poem-verse {
+            font-family: var(--font-title);
+            font-size: 22px;
+            line-height: 2;
+            color: var(--ink-black);
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: 4px;
+            font-weight: 500;
+            opacity: 0;
+            animation: fadeInVerse 0.6s var(--ease-brush) forwards;
+        }
+        
+        .poem-verse:nth-child(1) { animation-delay: 0.4s; }
+        .poem-verse:nth-child(2) { animation-delay: 0.5s; }
+        .poem-verse:nth-child(3) { animation-delay: 0.6s; }
+        .poem-verse:nth-child(4) { animation-delay: 0.7s; }
+        
+        @keyframes fadeInVerse {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .poem-description {
+            background: var(--paper-cream);
+            border-left: 4px solid var(--imperial-gold);
+            border-radius: 0 12px 12px 0;
+            padding: 20px 20px 20px 24px;
+            margin-bottom: 32px;
+        }
+        
+        .description-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ink-black);
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .description-text {
+            font-size: 15px;
+            line-height: 1.9;
+            color: var(--ink-gray);
+            letter-spacing: 0.5px;
+        }
+        
+        .favorite-button {
+            width: 100%;
+            padding: 18px;
+            background: white;
+            border: 2px solid var(--cinnabar-red);
+            border-radius: 18px;
+            font-size: 17px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            color: var(--cinnabar-red);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s var(--ease-brush);
+            letter-spacing: 2px;
+        }
+        
+        .favorite-button.favorited {
+            background: linear-gradient(135deg, var(--cinnabar-red) 0%, #b94630 100%);
+            color: white;
+        }
+        
+        .favorite-button:active {
+            transform: scale(0.98);
+        }
+        
+        /* ========== 收藏列表页 ========== */
+        .collection-page {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        
+        .collection-header {
+            padding: 24px 0;
+            text-align: center;
+        }
+        
+        .collection-count {
+            font-size: 48px;
+            font-family: var(--font-title);
+            font-weight: 900;
+            color: var(--cinnabar-red);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+        
+        .collection-subtitle {
+            font-size: 14px;
+            color: var(--ink-gray);
+            letter-spacing: 2px;
+        }
+        
+        .poem-list {
+            display: grid;
+            gap: 16px;
+            padding-bottom: 20px;
+        }
+        
+        .poem-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.06),
+                0 1px 4px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--mist-gray);
+            cursor: pointer;
+            transition: all 0.4s var(--ease-brush);
+            opacity: 0;
+            animation: fadeInCard 0.5s var(--ease-brush) forwards;
+        }
+        
+        .poem-card:nth-child(1) { animation-delay: 0.1s; }
+        .poem-card:nth-child(2) { animation-delay: 0.2s; }
+        .poem-card:nth-child(3) { animation-delay: 0.3s; }
+        .poem-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        @keyframes fadeInCard {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .poem-card:active {
+            transform: scale(0.98);
+        }
+        
+        .poem-card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .poem-card-content {
+            padding: 20px;
+        }
+        
+        .poem-card-title {
+            font-family: var(--font-title);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--ink-black);
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+        
+        .poem-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--ink-gray);
+            margin-bottom: 12px;
+        }
+        
+        .poem-card-verse {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--ink-gray);
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+        
+        .poem-card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .card-action-button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all 0.3s var(--ease-brush);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .card-action-view {
+            background: var(--paper-cream);
+            color: var(--ink-black);
+            border: 1.5px solid var(--mist-gray);
+        }
+        
+        .card-action-delete {
+            background: var(--cinnabar-red);
+            color: white;
+        }
+        
+        .card-action-button:active {
+            transform: scale(0.95);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+        }
+        
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        .empty-title {
+            font-family: var(--font-title);
+            font-size: 22px;
+            color: var(--ink-gray);
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+        
+        .empty-description {
+            font-size: 14px;
+            color: var(--ink-gray);
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+        
+        /* 响应式优化 */
+        @media (min-width: 1200px) {
+            .design-board {
+                max-width: 1600px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .design-main-title {
+                font-size: 36px;
+                letter-spacing: 4px;
+            }
+            
+            .device-frame {
+                border-width: 8px;
+                border-radius: 30px;
+            }
+            
+            .device-frame::before {
+                width: 120px;
+                height: 24px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .page-section-title {
+                font-size: 24px;
+                letter-spacing: 2px;
+            }
+            
+            .page-section-title::before {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+                margin-right: 8px;
+            }
+            
+            .feature-notes {
+                margin: 20px 10px 0;
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 375px) {
+            body {
+                padding: 20px 10px;
+            }
+            
+            .design-main-title {
+                font-size: 32px;
+            }
+            
+            .hero-title {
+                font-size: 44px;
+                letter-spacing: 6px;
+            }
+            
+            .poem-title {
+                font-size: 32px;
+                letter-spacing: 4px;
+            }
+            
+            .poem-verse {
+                font-size: 20px;
+                letter-spacing: 3px;
+            }
+            
+            .page-section-title {
+                font-size: 20px;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--mist-gray);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--ink-gray);
+        }
+        
+        /* 页脚 */
+        .design-footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 2px solid var(--mist-gray);
+        }
+        
+        .footer-text {
+            font-size: 14px;
+            color: var(--ink-gray);
+            letter-spacing: 1px;
+            line-height: 1.8;
+        }
+        
+        .footer-signature {
+            font-family: var(--font-title);
+            font-size: 24px;
+            color: var(--cinnabar-red);
+            margin-top: 16px;
+            letter-spacing: 4px;
+        }
+        
+        /* 功能说明 */
+        .feature-notes {
+            max-width: 500px;
+            margin: 30px auto 0;
+            padding: 24px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            border-left: 4px solid var(--jade-green);
+        }
+        
+        .feature-notes-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ink-black);
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .feature-notes-list {
+            font-size: 14px;
+            color: var(--ink-gray);
+            line-height: 1.9;
+            padding-left: 20px;
+        }
+        
+        .feature-notes-list li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="design-board">
+        <!-- 设计稿总标题 -->
+        <div class="design-header">
+            <h1 class="design-main-title">诗韵</h1>
+            <p class="design-subtitle">古诗词应用 UI/UX 设计稿</p>
+            <p class="design-description">
+                融合中国传统美学与现代 iOS 设计语言，展示古诗词应用的完整用户界面流程。
+                包含诗词输入、详情展示、音频播放、收藏管理等核心功能。
+            </p>
+        </div>
+        
+        <!-- ========== 首页展示 ========== -->
+        <div class="page-section-title" data-page="1">🏠 首页 - 诗词输入</div>
+        <div class="page-section-subtitle">用户输入古诗信息，点击按钮生成详情</div>
+        
+        <div class="device-frame">
+            <div class="page home-page" id="homePage">
+            <div class="hero-section">
+                <div class="ink-decoration"></div>
+                <div class="ink-decoration"></div>
+                <h1 class="hero-title">诗韵</h1>
+                <p class="hero-subtitle">千年诗意 · 一键生成</p>
+            </div>
+            
+            <div class="input-section">
+                <div class="input-group">
+                    <div class="input-label">
+                        <span class="input-label-icon">📖</span>
+                        <span>诗词标题</span>
+                    </div>
+                    <input type="text" class="text-input" placeholder="如：春晓" id="titleInput">
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-label">
+                        <span class="input-label-icon">✍️</span>
+                        <span>作者姓名</span>
+                    </div>
+                    <input type="text" class="text-input" placeholder="如：孟浩然" id="authorInput">
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-label">
+                        <span class="input-label-icon">🏛️</span>
+                        <span>朝代信息</span>
+                    </div>
+                    <input type="text" class="text-input" placeholder="如：唐" id="dynastyInput">
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-label">
+                        <span class="input-label-icon">📝</span>
+                        <span>诗词内容（选填）</span>
+                    </div>
+                    <textarea class="text-input" placeholder="输入诗词内容，或留空由系统生成..." id="contentInput"></textarea>
+                </div>
+            </div>
+            
+            <button class="generate-button" onclick="generatePoem()">✨ 生成古诗详情</button>
+            
+            <div class="example-section">
+                <div class="example-title">
+                    <span>💡</span>
+                    <span>热门推荐</span>
+                </div>
+                <div class="example-tags">
+                    <button class="example-tag" onclick="fillExample('春晓', '孟浩然', '唐')">春晓</button>
+                    <button class="example-tag" onclick="fillExample('静夜思', '李白', '唐')">静夜思</button>
+                    <button class="example-tag" onclick="fillExample('望庐山瀑布', '李白', '唐')">望庐山瀑布</button>
+                    <button class="example-tag" onclick="fillExample('相思', '王维', '唐')">相思</button>
+                    <button class="example-tag" onclick="fillExample('登鹳雀楼', '王之涣', '唐')">登鹳雀楼</button>
+                </div>
+            </div>
+            
+            <!-- 底部标签栏 -->
+            <div class="tab-bar">
+                <button class="tab-item active">
+                    <span class="tab-icon">🏠</span>
+                    <span class="tab-label">首页</span>
+                </button>
+                <button class="tab-item">
+                    <span class="tab-icon">❤️</span>
+                    <span class="tab-label">收藏</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="feature-notes">
+            <div class="feature-notes-title">
+                <span>💡</span>
+                <span>页面功能</span>
+            </div>
+            <ul class="feature-notes-list">
+                <li>用户输入古诗标题、作者、朝代等基本信息</li>
+                <li>可选填写诗词内容，或由系统自动生成</li>
+                <li>提供热门诗词快速填充功能</li>
+                <li>点击生成按钮后跳转到详情页</li>
+            </ul>
+        </div>
+        </div>
+        
+        <!-- ========== 古诗详情页展示 ========== -->
+        <div class="page-section-title" data-page="2">📖 古诗详情页</div>
+        <div class="page-section-subtitle">展示古诗的完整信息：图片、音频、诗句、赏析等</div>
+        
+        <div class="device-frame">
+            <div class="page detail-page" id="detailPage">
+            <div class="nav-bar">
+                <button class="nav-back">
+                    <span>‹</span>
+                    <span>返回</span>
+                </button>
+                <span class="nav-title">诗词详情</span>
+                <div class="nav-spacer"></div>
+            </div>
+            
+            <div class="poem-hero">
+                <img src="https://s.coze.cn/t/VDd8ZPXbPA4/" alt="诗词配图" class="poem-image" id="poemImage">
+                <div class="poem-overlay"></div>
+            </div>
+            
+            <div class="poem-content">
+                <div class="poem-header">
+                    <h2 class="poem-title" id="poemTitle">春晓</h2>
+                    <div class="poem-meta">
+                        <span id="poemDynasty">唐</span>
+                        <div class="poem-meta-divider"></div>
+                        <span id="poemAuthor">孟浩然</span>
+                    </div>
+                </div>
+                
+                <div class="audio-player">
+                    <button class="play-button" id="playButton" onclick="toggleAudio()">▶</button>
+                    <div class="audio-info">
+                        <div class="audio-title">朗诵音频</div>
+                        <div class="audio-progress">
+                            <div class="audio-progress-bar" id="audioProgressBar"></div>
+                        </div>
+                        <div class="audio-duration" id="audioDuration">00:00 / 00:34</div>
+                    </div>
+                </div>
+                
+                <div class="poem-verses" id="poemVerses">
+                    <div class="poem-verse">春眠不觉晓，处处闻啼鸟。</div>
+                    <div class="poem-verse">夜来风雨声，花落知多少。</div>
+                </div>
+                
+                <div class="poem-description">
+                    <div class="description-title">
+                        <span>📜</span>
+                        <span>诗词赏析</span>
+                    </div>
+                    <p class="description-text" id="poemDescription">
+                        春日里贪睡不知不觉天已破晓，到处可以听见小鸟的鸣叫声。回想昨夜的阵阵风雨声，不知吹落了多少娇美的春花。此诗描写了春天早晨的景色，表达了诗人对春天的喜爱和对落花的怜惜之情。
+                    </p>
+                </div>
+                
+                <button class="favorite-button" id="favoriteButton" onclick="toggleFavorite()">
+                    <span>♡</span>
+                    <span>收藏诗词</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="feature-notes">
+            <div class="feature-notes-title">
+                <span>💡</span>
+                <span>页面功能</span>
+            </div>
+            <ul class="feature-notes-list">
+                <li>展示古诗配图（1728x2304 尺寸）</li>
+                <li>音频播放器支持诗词朗读，显示播放进度</li>
+                <li>展示诗词标题、朝代、作者信息</li>
+                <li>优雅排版诗词句子内容</li>
+                <li>提供详细的诗词赏析和解释</li>
+                <li>支持收藏功能，可添加到收藏列表</li>
+            </ul>
+        </div>
+        </div>
+        
+        <!-- ========== 收藏列表页展示 ========== -->
+        <div class="page-section-title" data-page="3">❤️ 收藏列表页</div>
+        <div class="page-section-subtitle">用户可以查看、删除已收藏的古诗</div>
+        
+        <div class="device-frame">
+            <div class="page collection-page" id="collectionPage">
+            <div class="nav-bar">
+                <div class="nav-spacer"></div>
+                <span class="nav-title">我的收藏</span>
+                <div class="nav-spacer"></div>
+            </div>
+            
+            <div class="collection-header">
+                <div class="collection-count" id="collectionCount">3</div>
+                <div class="collection-subtitle">已收藏诗词</div>
+            </div>
+            
+            <div class="poem-list" id="poemList">
+                <!-- 收藏卡片 1 -->
+                <div class="poem-card" onclick="viewCollectionDetail(0)">
+                    <img src="https://s.coze.cn/t/VDd8ZPXbPA4/" alt="春晓" class="poem-card-image">
+                    <div class="poem-card-content">
+                        <h3 class="poem-card-title">春晓</h3>
+                        <div class="poem-card-meta">
+                            <span>唐</span>
+                            <div class="poem-meta-divider"></div>
+                            <span>孟浩然</span>
+                        </div>
+                        <p class="poem-card-verse">春眠不觉晓，处处闻啼鸟。</p>
+                        <div class="poem-card-actions">
+                            <button class="card-action-button card-action-view" onclick="event.stopPropagation(); viewCollectionDetail(0)">
+                                <span>👁️</span>
+                                <span>查看</span>
+                            </button>
+                            <button class="card-action-button card-action-delete" onclick="event.stopPropagation(); deleteCollection(0)">
+                                <span>🗑️</span>
+                                <span>删除</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 收藏卡片 2 -->
+                <div class="poem-card" onclick="viewCollectionDetail(1)">
+                    <img src="https://images.unsplash.com/photo-1523978591478-c753949ff840?w=800&q=80" alt="静夜思" class="poem-card-image">
+                    <div class="poem-card-content">
+                        <h3 class="poem-card-title">静夜思</h3>
+                        <div class="poem-card-meta">
+                            <span>唐</span>
+                            <div class="poem-meta-divider"></div>
+                            <span>李白</span>
+                        </div>
+                        <p class="poem-card-verse">床前明月光，疑是地上霜。</p>
+                        <div class="poem-card-actions">
+                            <button class="card-action-button card-action-view" onclick="event.stopPropagation(); viewCollectionDetail(1)">
+                                <span>👁️</span>
+                                <span>查看</span>
+                            </button>
+                            <button class="card-action-button card-action-delete" onclick="event.stopPropagation(); deleteCollection(1)">
+                                <span>🗑️</span>
+                                <span>删除</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 收藏卡片 3 -->
+                <div class="poem-card" onclick="viewCollectionDetail(2)">
+                    <img src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?w=800&q=80" alt="相思" class="poem-card-image">
+                    <div class="poem-card-content">
+                        <h3 class="poem-card-title">相思</h3>
+                        <div class="poem-card-meta">
+                            <span>唐</span>
+                            <div class="poem-meta-divider"></div>
+                            <span>王维</span>
+                        </div>
+                        <p class="poem-card-verse">红豆生南国，春来发几枝。</p>
+                        <div class="poem-card-actions">
+                            <button class="card-action-button card-action-view" onclick="event.stopPropagation(); viewCollectionDetail(2)">
+                                <span>👁️</span>
+                                <span>查看</span>
+                            </button>
+                            <button class="card-action-button card-action-delete" onclick="event.stopPropagation(); deleteCollection(2)">
+                                <span>🗑️</span>
+                                <span>删除</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 空状态（当无收藏时显示） -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">📚</div>
+                <h3 class="empty-title">暂无收藏</h3>
+                <p class="empty-description">收藏你喜欢的诗词<br>随时回味品读</p>
+            </div>
+            
+            <!-- 底部标签栏 -->
+            <div class="tab-bar">
+                <button class="tab-item">
+                    <span class="tab-icon">🏠</span>
+                    <span class="tab-label">首页</span>
+                </button>
+                <button class="tab-item active">
+                    <span class="tab-icon">❤️</span>
+                    <span class="tab-label">收藏</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="feature-notes">
+            <div class="feature-notes-title">
+                <span>💡</span>
+                <span>页面功能</span>
+            </div>
+            <ul class="feature-notes-list">
+                <li>显示已收藏古诗的总数量</li>
+                <li>卡片式展示收藏列表，包含缩略图和预览</li>
+                <li>每个卡片显示标题、作者、朝代和诗句预览</li>
+                <li>支持查看详情，点击跳转到详情页</li>
+                <li>支持删除收藏，可移除不需要的诗词</li>
+                <li>空状态提示，引导用户收藏诗词</li>
+            </ul>
+        </div>
+        </div>
+        
+        <!-- 设计稿页脚 -->
+        <div class="design-footer">
+            <p class="footer-text">
+                本设计稿展示了古诗词应用的完整 UI/UX 流程<br>
+                采用现代东方雅韵设计理念，融合传统与创新
+            </p>
+            <div class="footer-signature">诗韵 · 设计稿</div>
+        </div>
+        
+    </div>
+    
+    <script>
+        // ========== 示例填充 ==========
+        function fillExample(title, author, dynasty) {
+            document.getElementById('titleInput').value = title;
+            document.getElementById('authorInput').value = author;
+            document.getElementById('dynastyInput').value = dynasty;
+            
+            // 添加填充动画效果
+            const inputs = document.querySelectorAll('.text-input');
+            inputs.forEach((input, index) => {
+                if (input.value) {
+                    setTimeout(() => {
+                        input.style.transform = 'scale(1.02)';
+                        setTimeout(() => {
+                            input.style.transform = 'scale(1)';
+                        }, 200);
+                    }, index * 100);
+                }
+            });
+        }
+        
+        // ========== 生成古诗 ==========
+        function generatePoem() {
+            const title = document.getElementById('titleInput').value;
+            const author = document.getElementById('authorInput').value;
+            const dynasty = document.getElementById('dynastyInput').value;
+            
+            if (!title || !author || !dynasty) {
+                alert('请填写必填信息：标题、作者和朝代');
+                return;
+            }
+            
+            // 模拟加载效果
+            const button = document.querySelector('.generate-button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ 生成中...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                alert('在实际应用中，点击后会跳转到详情页面');
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }, 1000);
+        }
+        
+        // ========== 音频播放 ==========
+        let isPlaying = false;
+        let audioProgress = 0;
+        let audioInterval = null;
+        
+        function toggleAudio() {
+            const playButton = document.getElementById('playButton');
+            const progressBar = document.getElementById('audioProgressBar');
+            
+            isPlaying = !isPlaying;
+            
+            if (isPlaying) {
+                playButton.innerHTML = '⏸';
+                playButton.style.transform = 'scale(0.9)';
+                
+                // 模拟音频播放进度
+                audioInterval = setInterval(() => {
+                    audioProgress += 1;
+                    const percentage = (audioProgress / 34) * 100;
+                    progressBar.style.width = percentage + '%';
+                    
+                    // 更新时间显示
+                    const currentTime = Math.floor(audioProgress);
+                    const minutes = Math.floor(currentTime / 60);
+                    const seconds = currentTime % 60;
+                    document.getElementById('audioDuration').textContent = 
+                        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} / 00:34`;
+                    
+                    if (audioProgress >= 34) {
+                        audioProgress = 0;
+                        isPlaying = false;
+                        playButton.innerHTML = '▶';
+                        clearInterval(audioInterval);
+                    }
+                }, 1000);
+            } else {
+                playButton.innerHTML = '▶';
+                playButton.style.transform = 'scale(1)';
+                clearInterval(audioInterval);
+            }
+        }
+        
+        // ========== 收藏功能 ==========
+        let isFavorited = false;
+        
+        function toggleFavorite() {
+            const button = document.getElementById('favoriteButton');
+            isFavorited = !isFavorited;
+            
+            if (isFavorited) {
+                button.classList.add('favorited');
+                button.innerHTML = '<span>♥</span><span>已收藏</span>';
+                
+                // 添加动画效果
+                button.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    button.style.transform = 'scale(1)';
+                }, 300);
+                
+                // 模拟添加到收藏列表
+                alert('已添加到收藏！');
+            } else {
+                button.classList.remove('favorited');
+                button.innerHTML = '<span>♡</span><span>收藏诗词</span>';
+            }
+        }
+        
+        // ========== 收藏列表管理 ==========
+        function viewCollectionDetail(index) {
+            alert('在实际应用中，点击后会跳转到对应的诗词详情页');
+        }
+        
+        function deleteCollection(index) {
+            alert('在实际应用中，点击后会删除该收藏项');
+        }
+        
+        // ========== 初始化 ==========
+        window.addEventListener('load', () => {
+            // 添加页面加载动画
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.8s';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+        
+        // ========== 输入框交互优化 ==========
+        document.querySelectorAll('.text-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateX(4px)';
+                this.parentElement.style.transition = 'transform 0.3s var(--ease-brush)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateX(0)';
+            });
+        });
+    </script>
+</body>
+</html>
